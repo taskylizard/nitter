@@ -13,7 +13,6 @@ services:
     volumes:
       - ./nitter.conf:/src/nitter.conf:Z,ro
       - ./guest_accounts.json:/src/guest_accounts.json:Z,ro
-      - ./public/.twitterminator.txt:/src/public/.twitterminator.txt:Z,ro
     depends_on:
       - nitter-redis
     restart: unless-stopped
