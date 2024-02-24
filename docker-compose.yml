@@ -1,14 +1,19 @@
 version: "3"
 
-services:
-
+networks:
   nitter:
-    image: zedeus/nitter:latest
+
+services:
+  nitter:
+    build: .
     container_name: nitter
+    hostname: nitter
     ports:
-      - "127.0.0.1:8080:8080" # Replace with "8080:8080" if you don't use a reverse proxy
+      - "8002:8080" # Replace with "8080:8080" if you don't use a reverse proxy
     volumes:
       - ./nitter.conf:/src/nitter.conf:Z,ro
+      - ./guest_accounts.json:/src/guest_accounts.json:Z,ro
+      - ./public/.twitterminator.txt:/src/public/.twitterminator.txt:Z,ro
     depends_on:
       - nitter-redis
     restart: unless-stopped
@@ -23,6 +28,8 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    networks:
+      - nitter
 
   nitter-redis:
     image: redis:6-alpine
@@ -42,6 +49,8 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    networks:
+      - nitter
 
 volumes:
   nitter-redis:
