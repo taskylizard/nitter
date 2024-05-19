@@ -45,6 +45,9 @@ importers:
       dotenv:
         specifier: ^16.4.4
         version: 16.4.4
+      prettier:
+        specifier: ^3.2.5
+        version: 3.2.5
 
 packages:
 
@@ -290,6 +293,11 @@ packages:
 
   pino@8.18.0:
     resolution: {integrity: sha512-Mz/gKiRyuXu4HnpHgi1YWdHQCoWMufapzooisvFn78zl4dZciAxS+YeRkUxXl1ee/SzU80YCz1zpECCh4oC6Aw==}
+    hasBin: true
+
+  prettier@3.2.5:
+    resolution: {integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A==}
+    engines: {node: '>=14'}
     hasBin: true
 
   process-warning@2.3.2:
@@ -667,6 +675,8 @@ snapshots:
       safe-stable-stringify: 2.4.3
       sonic-boom: 3.8.0
       thread-stream: 2.4.1
+
+  prettier@3.2.5: {}
 
   process-warning@2.3.2: {}
 

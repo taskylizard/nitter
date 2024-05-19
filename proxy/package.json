@@ -4,6 +4,7 @@
   "scripts": {
     "clean": "rm -rf build",
     "prebuild": "npm run clean",
+    "format": "prettier -w --cache --check .",
     "build": "tsc --build"
   },
   "author": "",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
-    "dotenv": "^16.4.4"
+    "dotenv": "^16.4.4",
+    "prettier": "^3.2.5"
   }
 }
