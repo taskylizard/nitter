@@ -3,7 +3,7 @@ import strutils, strformat, sequtils, unicode, tables, options
 import karax/[karaxdsl, vdom]
 
 import renderutils, timeline
-import ".."/[types, query]
+import ".."/[types, query, config]
 
 const toggles = {
   "nativeretweets": "Retweets",
@@ -29,7 +29,7 @@ proc renderSearch*(): VNode =
               placeholder="Enter username...", dir="auto")
         button(`type`="submit"): icon "search"
 
-proc renderProfileTabs*(query: Query; username: string): VNode =
+proc renderProfileTabs*(query: Query; username: string; cfg: Config): VNode =
   let link = "/" & username
   buildHtml(ul(class="tab")):
     li(class=query.getTabClass(posts)):
@@ -38,6 +38,8 @@ proc renderProfileTabs*(query: Query; username: string): VNode =
       a(href=(link & "/with_replies")): text "Tweets & Replies"
     li(class=query.getTabClass(media)):
       a(href=(link & "/media")): text "Media"
+    li(class=query.getTabClass(favorites)):
+      a(href=(link & "/favorites")): text "Likes"
     li(class=query.getTabClass(tweets)):
       a(href=(link & "/search")): text "Search"
 
@@ -97,7 +99,7 @@ proc renderTweetSearch*(results: Timeline; prefs: Prefs; path: string;
         text query.fromUser.join(" | ")
 
     if query.fromUser.len > 0:
-      renderProfileTabs(query, query.fromUser.join(","))
+      renderProfileTabs(query, query.fromUser.join(","), cfg)
 
     if query.fromUser.len == 0 or query.kind == tweets:
       tdiv(class="timeline-header"):
@@ -117,4 +119,9 @@ proc renderUserSearch*(results: Result[User]; prefs: Prefs): VNode =
         button(`type`="submit"): icon "search"
 
     renderSearchTabs(results.query)
+    renderTimelineUsers(results, prefs)
+
+proc renderUserList*(results: Result[User]; prefs: Prefs): VNode =
+  buildHtml(tdiv(class="timeline-container")):
+    tdiv(class="timeline-header")
     renderTimelineUsers(results, prefs)

@@ -32,6 +32,8 @@ proc renderNavbar(cfg: Config; req: Request; rss, canonical: string): VNode =
         if cfg.enableRss and rss.len > 0:
           icon "rss-feed", title="RSS Feed", href=rss
         icon "bird", title="Open in Twitter", href=canonical
+        a(href="https://liberapay.com/zedeus"): verbatim lp
+        icon "info", title="About", href="/about"
         icon "cog", title="Preferences", href=("/settings?referer=" & encodeUrl(path))
 
 proc renderHead*(prefs: Prefs; cfg: Config; req: Request; titleText=""; desc="";
@@ -71,7 +73,7 @@ proc renderHead*(prefs: Prefs; cfg: Config; req: Request; titleText=""; desc="";
       link(rel="alternate", type="application/rss+xml", href=rss, title="RSS feed")
 
     if prefs.hlsPlayback:
-      script(src="/js/hls.min.js", `defer`="")
+      script(src="/js/hls.light.min.js", `defer`="")
       script(src="/js/hlsPlayback.js", `defer`="")
 
     if prefs.infiniteScroll:

@@ -13,7 +13,7 @@ proc renderStat(num: int; class: string; text=""): VNode =
       text insertSep($num, ',')
 
 proc renderUserCard*(user: User; prefs: Prefs): VNode =
-  buildHtml(tdiv(class="profile-card", "data-profile-id" = $user.id)):
+  buildHtml(tdiv(class="profile-card")):
     tdiv(class="profile-card-info"):
       let
         url = getPicUrl(user.getUserPic())
@@ -58,10 +58,14 @@ proc renderUserCard*(user: User; prefs: Prefs): VNode =
 
       tdiv(class="profile-card-extra-links"):
         ul(class="profile-statlist"):
-          renderStat(user.tweets, "posts", text="Tweets")
-          renderStat(user.following, "following")
-          renderStat(user.followers, "followers")
-          renderStat(user.likes, "likes")
+          a(href="/" & user.username):
+            renderStat(user.tweets, "posts", text="Tweets")
+          a(href="/" & user.username & "/following"):
+            renderStat(user.following, "following")
+          a(href="/" & user.username & "/followers"):
+            renderStat(user.followers, "followers")
+          a(href="/" & user.username & "/favorites"):
+            renderStat(user.likes, "likes")
 
 proc renderPhotoRail(profile: Profile): VNode =
   let count = insertSep($profile.user.media, ',')
@@ -99,7 +103,7 @@ proc renderProtected(username: string): VNode =
       h2: text "This account's tweets are protected."
       p: text &"Only confirmed followers have access to @{username}'s tweets."
 
-proc renderProfile*(profile: var Profile; prefs: Prefs; path: string): VNode =
+proc renderProfile*(profile: var Profile; cfg: Config; prefs: Prefs; path: string): VNode =
   profile.tweets.query.fromUser = @[profile.user.username]
 
   buildHtml(tdiv(class="profile-tabs")):

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 import asyncdispatch, strformat, logging
+import config
 from net import Port
 from htmlgen import a
 from os import getEnv
@@ -10,15 +11,12 @@ import types, config, prefs, formatters, redis_cache, http_pool, auth
 import views/[general, about]
 import routes/[
   preferences, timeline, status, media, search, rss, list, debug,
-  twitter_api, unsupported, embed, resolver, router_utils]
+  unsupported, embed, resolver, router_utils]
 
 const instancesUrl = "https://github.com/zedeus/nitter/wiki/Instances"
 const issuesUrl = "https://github.com/zedeus/nitter/issues"
 
 let
-  configPath = getEnv("NITTER_CONF_FILE", "./nitter.conf")
-  (cfg, fullCfg) = getConfig(configPath)
-
   accountsPath = getEnv("NITTER_ACCOUNTS_FILE", "./guest_accounts.json")
 
 initAccountPool(cfg, accountsPath)
@@ -53,7 +51,6 @@ createSearchRouter(cfg)
 createMediaRouter(cfg)
 createEmbedRouter(cfg)
 createRssRouter(cfg)
-createTwitterApiRouter(cfg)
 createDebugRouter(cfg)
 
 settings:

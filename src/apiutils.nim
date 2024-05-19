@@ -3,6 +3,7 @@ import httpclient, asyncdispatch, options, strutils, uri, times, math, tables
 import jsony, packedjson, zippy, oauth1
 import types, auth, consts, parserutils, http_pool
 import experimental/types/common
+import config
 
 const
   rlRemaining = "x-rate-limit-remaining"
@@ -48,7 +49,7 @@ proc getOauthHeader(url, oauthToken, oauthTokenSecret: string): string =
 
 proc genHeaders*(url, oauthToken, oauthTokenSecret: string): HttpHeaders =
   let header = getOauthHeader(url, oauthToken, oauthTokenSecret)
-
+  
   result = newHttpHeaders({
     "connection": "keep-alive",
     "authorization": header,
@@ -61,7 +62,14 @@ proc genHeaders*(url, oauthToken, oauthTokenSecret: string): HttpHeaders =
     "DNT": "1"
   })
 
-template fetchImpl(result, fetchBody) {.dirty.} =
+template updateAccount() =
+  if resp.headers.hasKey(rlRemaining):
+    let
+      remaining = parseInt(resp.headers[rlRemaining])
+      reset = parseInt(resp.headers[rlReset])
+    account.setRateLimit(api, remaining, reset)
+
+template fetchImpl(result, additional_headers, fetchBody) {.dirty.} =
   once:
     pool = HttpPool()
 
@@ -72,12 +80,18 @@ template fetchImpl(result, fetchBody) {.dirty.} =
 
   try:
     var resp: AsyncResponse
-    pool.use(genHeaders($url, account.oauthToken, account.oauthSecret)):
+    var headers = genHeaders($url, account.oauthToken, account.oauthSecret)
+    for key, value in additional_headers.pairs():
+      headers.add(key, value)
+    pool.use(headers):
       template getContent =
         resp = await c.get($url)
         result = await resp.body
 
       getContent()
+
+      if resp.status == $Http429:
+        raise rateLimitError()
 
       if resp.status == $Http503:
         badClient = true
@@ -133,10 +147,11 @@ template retry(bod) =
     echo "[accounts] Rate limited, retrying ", api, " request..."
     bod
 
-proc fetch*(url: Uri; api: Api): Future[JsonNode] {.async.} =
+proc fetch*(url: Uri; api: Api; additional_headers: HttpHeaders = newHttpHeaders()): Future[JsonNode] {.async.} =
+
   retry:
     var body: string
-    fetchImpl body:
+    fetchImpl(body, additional_headers):
       if body.startsWith('{') or body.startsWith('['):
         result = parseJson(body)
       else:
@@ -149,9 +164,9 @@ proc fetch*(url: Uri; api: Api): Future[JsonNode] {.async.} =
         invalidate(account)
         raise rateLimitError()
 
-proc fetchRaw*(url: Uri; api: Api): Future[string] {.async.} =
+proc fetchRaw*(url: Uri; api: Api; additional_headers: HttpHeaders = newHttpHeaders()): Future[string] {.async.} =
   retry:
-    fetchImpl result:
+    fetchImpl(result, additional_headers):
       if not (result.startsWith('{') or result.startsWith('[')):
         echo resp.status, ": ", result, " --- url: ", url
         result.setLen(0)
