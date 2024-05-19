@@ -1,0 +1,27 @@
+{
+  "name": "nitter-proxy",
+  "version": "1.6.7",
+  "scripts": {
+    "clean": "rm -rf build",
+    "prebuild": "npm run clean",
+    "build": "tsc --build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/rate-limit": "^9.1.0",
+    "axios": "^1.6.7",
+    "axios-retry-after": "^2.0.0",
+    "fastify": "^4.21.0",
+    "fastq": "^1.17.1",
+    "lru-cache": "^10.2.0",
+    "lru-ttl-cache": "^2.4.8",
+    "pino": "^8.14.2",
+    "pino-pretty": "^10.2.0",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "dotenv": "^16.4.4"
+  }
+}

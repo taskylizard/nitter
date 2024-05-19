@@ -4,6 +4,22 @@ networks:
   nitter:
 
 services:
+  # proxy:
+  #   hostname: nitter-proxy
+  #   container_name: nitter-proxy
+  #   build:
+  #     context: ./proxy
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     HOST: "0.0.0.0"
+  #     PORT: "8080"
+  #     NITTER_BASE_URL: "http://nitter:8080"
+  #     CONCURRENCY: "1"
+  #   ports:
+  #     - "8002:8080"
+  #   networks:
+  #     - nitter
+
   nitter:
     build: .
     container_name: nitter
