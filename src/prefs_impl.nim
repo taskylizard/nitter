@@ -107,6 +107,14 @@ genPrefs:
       "Reddit -> Teddit/Libreddit"
       placeholder: "Teddit hostname"
 
+    replaceImgur(input, ""):
+      "Imgur -> Rimgo"
+      placeholder: "Rimgo hostname"
+
+    replaceMedium(input, ""):
+      "Medium -> Scribe"
+      placeholder: "Scribe hostname"
+
 iterator allPrefs*(): Pref =
   for k, v in prefList:
     for pref in v:
