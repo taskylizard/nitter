@@ -100,3 +100,7 @@ proc getTabClass*(query: Query; tab: QueryKind): string =
 proc getAvatarClass*(prefs: Prefs): string =
   if prefs.squareAvatars: "avatar"
   else: "avatar round"
+
+proc isFollowing*(name, following: string): bool =
+  let following = following.split(",")
+  return name in following

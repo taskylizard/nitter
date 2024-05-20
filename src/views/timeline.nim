@@ -55,7 +55,16 @@ proc renderThread(thread: Tweets; prefs: Prefs; path: string): VNode =
       renderTweet(tweet, prefs, path, class=(header & "thread"),
                   index=i, last=(i == thread.high), showThread=show)
 
-proc renderUser(user: User; prefs: Prefs): VNode =
+proc threadFilter(tweets: openArray[Tweet]; threads: openArray[int64]; it: Tweet): seq[Tweet] =
+  result = @[it]
+  if it.retweet.isSome or it.replyId in threads: return
+  for t in tweets:
+    if t.id == result[0].replyId:
+      result.insert t
+    elif t.replyId == result[0].id:
+      result.add t
+
+proc renderUser*(user: User; prefs: Prefs): VNode =
   buildHtml(tdiv(class="timeline-item")):
     a(class="tweet-link", href=("/" & user.username))
     tdiv(class="tweet-body profile-result"):
