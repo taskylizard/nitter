@@ -13,7 +13,7 @@ proc renderStat(num: int; class: string; text=""): VNode =
       text insertSep($num, ',')
 
 proc renderUserCard*(user: User; prefs: Prefs; path: string): VNode =
-  buildHtml(tdiv(class="profile-card")):
+  buildHtml(tdiv(class="profile-card", "data-profile-id" = $user.id)):
     tdiv(class="profile-card-info"):
       let
         url = getPicUrl(user.getUserPic())
