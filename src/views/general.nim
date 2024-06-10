@@ -54,6 +54,9 @@ proc renderHead*(prefs: Prefs; cfg: Config; req: Request; titleText=""; desc="";
   buildHtml(head):
     link(rel="stylesheet", type="text/css", href="/css/style.css?v=20")
     link(rel="stylesheet", type="text/css", href="/css/fontello.css?v=2")
+    link(rel="stylesheet", href="/css/baguetteBox.min.css")
+    script(src="/js/baguetteBox.min.js", `async`="")
+    script(src="/js/zoom.js")
 
     if theme.len > 0:
       link(rel="stylesheet", type="text/css", href=(&"/css/themes/{theme}.css"))
