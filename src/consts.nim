@@ -17,7 +17,7 @@ const
   graphUserById* = graphql / "oPppcargziU1uDQHAUmH-A/UserResultByIdQuery"
   graphUserTweets* = graphql / "3JNH4e9dq1BifLxAa3UMWg/UserWithProfileTweetsQueryV2"
   graphUserTweetsAndReplies* = graphql / "8IS8MaO-2EN6GZZZb8jF0g/UserWithProfileTweetsAndRepliesQueryV2"
-  graphUserMedia* = graphql / "PDfFf8hGeJvUCiTyWtw4wQ/MediaTimelineV2"
+  graphUserMedia* = graphql / "dexO_2tohK86JDudXXG3Yw/UserMedia"
   graphTweet* = graphql / "q94uRCEn65LZThakYcPT6g/TweetDetail"
   graphTweetResult* = graphql / "sITyJdhRPpvpEjg4waUmTA/TweetResultByIdQuery"
   graphSearchTimeline* = graphql / "gkjsKepM6gl_HmFWoWKfgg/SearchTimeline"
@@ -49,8 +49,11 @@ const
 
   gqlFeatures* = """{
   "android_graphql_skip_api_media_color_palette": false,
+  "articles_preview_enabled": false,
   "blue_business_profile_image_shape_enabled": false,
   "c9s_tweet_anatomy_moderator_badge_enabled": false,
+  "communities_web_enable_tweet_community_results_fetch": false,
+  "creator_subscriptions_quote_tweet_preview_enabled": false,
   "creator_subscriptions_subscription_count_enabled": false,
   "creator_subscriptions_tweet_preview_api_enabled": true,
   "freedom_of_speech_not_reach_fetch_enabled": false,
@@ -72,6 +75,7 @@ const
   "responsive_web_twitter_article_tweet_consumption_enabled": false,
   "responsive_web_twitter_blue_verified_badge_is_enabled": true,
   "rweb_lists_timeline_redesign_enabled": true,
+  "rweb_tipjar_consumption_enabled": false,
   "rweb_video_timestamps_enabled": true,
   "spaces_2022_h2_clipping": true,
   "spaces_2022_h2_spaces_communities": true,
@@ -117,21 +121,28 @@ const
   userTweetsVariables* = """{
   "rest_id": "$1", $2
   "count": 20
-}"""
+}""".replace(" ", "").replace("\n", "")
 
   listTweetsVariables* = """{
   "rest_id": "$1", $2
   "count": 20
-}"""
+}""".replace(" ", "").replace("\n", "")
 
   reactorsVariables* = """{
   "tweetId" : "$1", $2
   "count" : 20,
   "includePromotedContent": false
-}"""
+}""".replace(" ", "").replace("\n", "")
 
   followVariables* = """{
   "userId" : "$1", $2
   "count" : 20,
   "includePromotedContent": false
-}"""
+}""".replace(" ", "").replace("\n", "")
+
+  userMediaVariables* = """{
+  "userId": "$1",
+  $2
+  "count": 20,
+  "includePromotedContent": false
+}""".replace(" ", "").replace("\n", "")

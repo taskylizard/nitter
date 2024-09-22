@@ -73,11 +73,17 @@ proc createStatusRouter*(cfg: Config) =
         video = ""
 
       if conv.tweet.video.isSome():
-        images = @[get(conv.tweet.video).thumb]
-        video = getVideoEmbed(cfg, conv.tweet.id)
+        let videoObj = get(conv.tweet.video)
+        images = @[videoObj.thumb]
+
+        let vars = videoObj.variants.filterIt(it.contentType == mp4)
+        # idk why this wont sort when it sorts everywhere else
+        #video = vars.sortedByIt(it.bitrate)[^1].url
+        video = vars[^1].url
       elif conv.tweet.gif.isSome():
-        images = @[get(conv.tweet.gif).thumb]
-        video = getPicUrl(get(conv.tweet.gif).url)
+        let gif = get(conv.tweet.gif)
+        images = @[gif.thumb]
+        video = getPicUrl(gif.url)
       elif conv.tweet.card.isSome():
         let card = conv.tweet.card.get()
         if card.image.len > 0:

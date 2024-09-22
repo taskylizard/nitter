@@ -24,14 +24,15 @@ proc getGraphUserTweets*(id: string; kind: TimelineKind; after=""): Future[Profi
   if id.len == 0: return
   let
     cursor = if after.len > 0: "\"cursor\":\"$1\"," % after else: ""
-    variables = userTweetsVariables % [id, cursor]
-    params = {"variables": variables, "features": gqlFeatures}
+    variables = if kind == TimelineKind.media: userMediaVariables % [id, cursor] else: userTweetsVariables % [id, cursor]
+    fieldToggles = """{"withArticlePlainText":true}"""
+    params = {"variables": variables, "features": gqlFeatures, "fieldToggles": fieldToggles}
     (url, apiId) = case kind
                    of TimelineKind.tweets: (graphUserTweets, Api.userTweets)
                    of TimelineKind.replies: (graphUserTweetsAndReplies, Api.userTweetsAndReplies)
                    of TimelineKind.media: (graphUserMedia, Api.userMedia)
     js = await fetch(url ? params, apiId)
-  result = parseGraphTimeline(js, "user", after)
+  result = parseGraphTimeline(js, if kind == TimelineKind.media: "" else: "user", after)
 
 proc getGraphListTweets*(id: string; after=""): Future[Timeline] {.async.} =
   if id.len == 0: return

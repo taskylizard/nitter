@@ -101,9 +101,9 @@ proc getUserTweets*(id: string; after=""): Future[string] {.async.} =
   if id.len == 0: return
   let
     cursor = if after.len > 0: "\"cursor\":\"$1\"," % after else: ""
-    variables = userTweetsVariables % [id, cursor]
+    variables = userMediaVariables % [id, cursor]
     params = {"variables": variables, "features": gqlFeatures}
-  result = await fetchRaw(graphUserTweets ? params, Api.userTweets)
+  result = await fetchRaw(graphUserMedia ? params, Api.userTweets)
 
 proc getUserReplies*(id: string; after=""): Future[string] {.async.} =
   if id.len == 0: return

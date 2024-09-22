@@ -34,3 +34,6 @@ proc createEmbedRouter*(cfg: Config) =
         redirect(&"/i/status/{id}/embed")
       else:
         resp Http404
+    
+    get "/oembed.json":
+      respJson generateOembed(cfg, @"type", @"title", @"user", @"url")

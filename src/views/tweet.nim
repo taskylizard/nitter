@@ -100,7 +100,7 @@ proc renderVideo*(video: Video; prefs: Prefs; path: string): VNode =
         else:
           let
             vars = video.variants.filterIt(it.contentType == playbackType)
-            vidUrl = vars.sortedByIt(it.resolution)[^1].url
+            vidUrl = vars.sortedByIt(it.bitrate)[^1].url
             source = if prefs.proxyVideos: getVidUrl(vidUrl)
                      else: vidUrl
           case playbackType
@@ -188,7 +188,7 @@ proc renderStats(stats: TweetStats; views: string; tweet: Tweet): VNode =
       span(class="tweet-stat"): icon "retweet", formatStat(stats.retweets)
     a(href="/search?q=quoted_tweet_id:" & $tweet.id):
       span(class="tweet-stat"): icon "quote", formatStat(stats.quotes)
-    a(href=getLink(tweet, false) & "/favoriters"):
+    a():
       span(class="tweet-stat"): icon "heart", formatStat(stats.likes)
     a(href=getLink(tweet)):
       if views.len > 0:

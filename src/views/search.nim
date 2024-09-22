@@ -38,8 +38,6 @@ proc renderProfileTabs*(query: Query; username: string; cfg: Config): VNode =
       a(href=(link & "/with_replies")): text "Tweets & Replies"
     li(class=query.getTabClass(media)):
       a(href=(link & "/media")): text "Media"
-    li(class=query.getTabClass(favorites)):
-      a(href=(link & "/favorites")): text "Likes"
     li(class=query.getTabClass(tweets)):
       a(href=(link & "/search")): text "Search"
 

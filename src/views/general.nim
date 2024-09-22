@@ -42,9 +42,9 @@ proc renderHead*(prefs: Prefs; cfg: Config; req: Request; titleText=""; desc="";
   var theme = prefs.theme.toTheme
   if "theme" in req.params:
     theme = req.params["theme"].toTheme
-    
+
   let ogType =
-    if video.len > 0: "video"
+    if video.len > 0: "video.other"
     elif rss.len > 0: "object"
     elif images.len > 0: "photo"
     else: "article"
@@ -88,11 +88,17 @@ proc renderHead*(prefs: Prefs; cfg: Config; req: Request; titleText=""; desc="";
       else:
         text cfg.title
 
+    let finalizedTitleText = (if ogTitle.len > 0: ogTitle else: titleText)
+    let finalizedDesc = stripHtml(desc)
+    
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     meta(name="theme-color", content="#1F1F1F")
     meta(property="og:type", content=ogType)
-    meta(property="og:title", content=(if ogTitle.len > 0: ogTitle else: titleText))
-    meta(property="og:description", content=stripHtml(desc))
+    if video.len > 0 and len(finalizedDesc) <= 67:
+      meta(property="og:title", content=finalizedDesc)
+    else:
+      meta(property="og:title", content=(if ogTitle.len > 0: ogTitle else: titleText))
+    meta(property="og:description", content=finalizedDesc)
     meta(property="og:site_name", content="Nitter")
     meta(property="og:locale", content="en_US")
 
@@ -107,17 +113,25 @@ proc renderHead*(prefs: Prefs; cfg: Config; req: Request; titleText=""; desc="";
 
       let image = getUrlPrefix(cfg) & getPicUrl(url)
       meta(property="og:image", content=image)
-      meta(property="twitter:image:src", content=image)
+      if video.len == 0:
+        meta(property="twitter:image:src", content=image)
 
       if rss.len > 0:
         meta(property="twitter:card", content="summary")
-      else:
+      elif video.len == 0:
         meta(property="twitter:card", content="summary_large_image")
 
     if video.len > 0:
       meta(property="og:video:url", content=video)
       meta(property="og:video:secure_url", content=video)
-      meta(property="og:video:type", content="text/html")
+      meta(property="og:video:type", content="video/mp4")
+      var title = encodeUrl(finalizedDesc)
+      var author = encodeUrl(finalizedTitleText)
+      if len(finalizedDesc) > 67:
+        title = author
+        author = encodeUrl(finalizedDesc)
+
+      verbatim &"<link rel=\"alternate\" href=\"{getUrlPrefix(cfg)}/oembed.json?type=video&title={title}&user={author}&url={encodeUrl(req.path)}\" type=\"application/json+oembed\" />"
 
     # this is last so images are also preloaded
     # if this is done earlier, Chrome only preloads one image for some reason

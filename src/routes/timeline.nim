@@ -16,7 +16,7 @@ proc getQuery*(request: Request; tab, name: string): Query =
   case tab
   of "with_replies": getReplyQuery(name)
   of "media": getMediaQuery(name)
-  of "favorites": getFavoritesQuery(name)
+  # of "favorites": getFavoritesQuery(name)
   of "search": initQuery(params(request), name=name)
   else: Query(fromUser: @[name])
 
@@ -57,7 +57,7 @@ proc fetchProfile*(after: string; query: Query; cfg: Config; skipRail=false;
     of posts: await getGraphUserTweets(userId, TimelineKind.tweets, after)
     of replies: await getGraphUserTweets(userId, TimelineKind.replies, after)
     of media: await getGraphUserTweets(userId, TimelineKind.media, after)
-    of favorites: await getFavorites(userId, cfg, after)
+    # of favorites: await getFavorites(userId, cfg, after)
     else: Profile(tweets: await getGraphTweetSearch(query, after))
 
   result.user = await user
@@ -111,7 +111,7 @@ proc createTimelineRouter*(cfg: Config) =
     get "/@name/?@tab?/?":
       cond '.' notin @"name"
       cond @"name" notin ["pic", "gif", "video", "search", "settings", "login", "intent", "i"]
-      cond @"tab" in ["with_replies", "media", "search", "favorites", "following", "followers", ""]
+      cond @"tab" in ["with_replies", "media", "search", "following", "followers", ""]
       let
         prefs = cookiePrefs()
         after = getCursor()

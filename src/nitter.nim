@@ -11,7 +11,7 @@ import types, config, prefs, formatters, redis_cache, http_pool, auth
 import views/[general, about]
 import routes/[
   preferences, timeline, status, media, search, rss, list, debug,
-  unsupported, embed, resolver, router_utils, home,follow]
+  unsupported, embed, resolver, router_utils, home,follow,twitter_api]
 
 const instancesUrl = "https://github.com/zedeus/nitter/wiki/Instances"
 const issuesUrl = "https://github.com/zedeus/nitter/issues"
@@ -52,6 +52,7 @@ createMediaRouter(cfg)
 createEmbedRouter(cfg)
 createRssRouter(cfg)
 createDebugRouter(cfg)
+createTwitterApiRouter(cfg)
 
 settings:
   port = Port(cfg.port)
@@ -104,4 +105,5 @@ routes:
   extend resolver, ""
   extend embed, ""
   extend debug, ""
+  extend api, ""
   extend unsupported, ""
